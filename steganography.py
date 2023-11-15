@@ -43,12 +43,35 @@ def decode_image(path_to_png):
     decoded_image.save("decoded_image.png")
 
 
-def encode_image(path_to_png):
+def encode_image(path_to_png, message):
     """
     TODO: Add docstring and complete implementation.
     """
-    pass
-
+    original_image = Image.open(path_to_png)
+    red_channel, green_channel, blue_channel = original_image.split()
+    
+    binary_message = ''.join(format(ord(char), '08b') for char in message) + '11111111'
+    binary_message += '0' * (red_channel.size[0] * red_channel.size[1] - len(binary_message))
+    
+    encoded_image = Image.new("RGB", original_image.size)
+    pixels = encoded_image.load()
+    
+    idx = 0
+    for y in range(red_channel.size[1]):
+        for x in range(red_channel.size[0]):
+            red_pixel = red_channel.getpixel((x, y))
+            green_pixel = green_channel.getpixel((x, y))
+            blue_pixel = blue_channel.getpixel((x, y))
+            
+            if idx < len(binary_message):
+                new_red_pixel = (red_pixel & ~1) | int(binary_message[idx])
+                idx += 1
+            else:
+                new_red_pixel = red_pixel
+            
+            pixels[x, y] = (new_red_pixel, green_pixel, blue_pixel)
+    
+    encoded_image.save("encoded_image.png")
 
 def write_text(text_to_write):
     """
@@ -56,7 +79,10 @@ def write_text(text_to_write):
     """
     pass
 
-decode_image('/encoded-imgs/encoded_sample.png')
+# decode_image('/encoded-imgs/encoded_sample.png')
+decode_image('/encoded-image.png')
+
+# encode_image('./test-input.jpeg', 'Hello World!')
 
 
 

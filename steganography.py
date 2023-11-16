@@ -96,7 +96,7 @@ def write_text(text_to_write, path_to_input_png, path_to_output_png):
 
     draw = ImageDraw.Draw(image)
 
-    position = (50, 50)
+    position = (400, 400)
     color = 'rgb(0, 0, 0)'
 
     draw.text(position, text_to_write, fill=color, font=font)
@@ -105,6 +105,6 @@ def write_text(text_to_write, path_to_input_png, path_to_output_png):
     print(f"Image with text saved to {path_to_output_png}")
 
 # decode_image('encoded-imgs/encoded_sample.png')
-# write_text("hello world", "test-input.png", "test-output.png")
+write_text("hello world", "test-input.png", "test-output.png")
 # encode_image('test-input.png', 'Hello World!')
-decode_image('encoded_image.png')
+# decode_image('encoded_image.png')

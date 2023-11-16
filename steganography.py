@@ -42,69 +42,45 @@ def decode_image(path_to_png):
     # DO NOT MODIFY. Save the decoded image to disk:
     decoded_image.save("decoded_image.png")
 
-
-def encode_image(path_to_png, message):
+def encode_image(path_to_original_png, path_to_text_png):
     """
     TODO: Add docstring and complete implementation.
     """
-    original_image = Image.open(path_to_png)
-
-    num_channels = len(original_image.getbands())
-
-    if num_channels == 4:
-        red_channel, green_channel, blue_channel, alpha_channel = original_image.split()
-    elif num_channels == 3:
-        red_channel, green_channel, blue_channel = original_image.split()
-    else:
-        raise ValueError("Unsupported image format. The image must be RGB or RGBA.")
-
-    binary_message = ''.join(format(ord(char), '08b') for char in message) + '11111111'
-
-    if len(binary_message) > red_channel.size[0] * red_channel.size[1]:
-        raise ValueError("Message is too long to be encoded in this image.")
-
+    original_image = Image.open(path_to_original_png)
+    text_image = Image.open(path_to_text_png)
     encoded_image = Image.new("RGB", original_image.size)
-    pixels = encoded_image.load()
 
-    idx = 0
-    for y in range(red_channel.size[1]):
-        for x in range(red_channel.size[0]):
-            red_pixel = red_channel.getpixel((x, y))
-            green_pixel = green_channel.getpixel((x, y))
-            blue_pixel = blue_channel.getpixel((x, y))
+    for y in range(original_image.size[1]):
+        for x in range(original_image.size[0]):
+            original_pixel = original_image.getpixel((x, y))
+            text_pixel = text_image.getpixel((x, y))
+            new_red_pixel = (original_pixel[0] & ~1) | (text_pixel[0] & 1)
+            new_green_pixel = (original_pixel[1] & ~1) | (text_pixel[1] & 1)
+            new_blue_pixel = (original_pixel[2] & ~1) | (text_pixel[2] & 1)
 
-            if idx < len(binary_message):
-                new_red_pixel = (red_pixel & ~1) | int(binary_message[idx])
-                idx += 1
-            else:
-                new_red_pixel = red_pixel
-
-            pixels[x, y] = (new_red_pixel, green_pixel, blue_pixel)
+            encoded_image.putpixel((x, y), (new_red_pixel, new_green_pixel, new_blue_pixel))
 
     encoded_image.save("encoded_image.png")
 
-def write_text(text_to_write, path_to_input_png, path_to_output_png):
+def write_text(text_to_write, path_to_output_png, image_size):
     """
     TODO: Add docstring and complete implementation.
     """
-    image = Image.open(path_to_input_png)
+    black_background = Image.new("RGB", image_size, "black")
+    draw = ImageDraw.Draw(black_background)
 
     try:
         font = ImageFont.truetype("arial.ttf", 40) 
     except IOError:
         font = ImageFont.load_default()
 
-    draw = ImageDraw.Draw(image)
-
-    position = (400, 400)
-    color = 'rgb(0, 0, 0)'
+    position = (200, 200)
+    color = "white" 
 
     draw.text(position, text_to_write, fill=color, font=font)
+    black_background.save(path_to_output_png)
+    print(f"Text image saved to {path_to_output_png}")
 
-    image.save(path_to_output_png)
-    print(f"Image with text saved to {path_to_output_png}")
-
-# decode_image('encoded-imgs/encoded_sample.png')
-write_text("hello world", "test-input.png", "test-output.png")
-# encode_image('test-input.png', 'Hello World!')
-# decode_image('encoded_image.png')
+# write_text("Secret Message", "secret_text.png", (1920, 1080))
+# encode_image("test_input.png", "secret_text.png")
+decode_image("encoded_image.png")

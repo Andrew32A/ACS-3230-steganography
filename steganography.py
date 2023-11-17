@@ -62,25 +62,28 @@ def encode_image(path_to_original_png, path_to_text_png):
 
     encoded_image.save("encoded_image.png")
 
-def write_text(text_to_write, path_to_output_png, image_size):
+def write_text(text_to_write, path_to_output_png):
     """
     TODO: Add docstring and complete implementation.
     """
-    black_background = Image.new("RGB", image_size, "black")
+    black_background = Image.new("RGB", (1600, 900), "black")
     draw = ImageDraw.Draw(black_background)
-
-    try:
-        font = ImageFont.truetype("arial.ttf", 40) 
-    except IOError:
-        font = ImageFont.load_default()
+    font = ImageFont.load_default()
 
     position = (200, 200)
     color = "white" 
 
     draw.text(position, text_to_write, fill=color, font=font)
     black_background.save(path_to_output_png)
-    print(f"Text image saved to {path_to_output_png}")
 
-# write_text("Secret Message", "secret_text.png", (1920, 1080))
-# encode_image("test_input.png", "secret_text.png")
+secret_text = """
+"Sometimes life is like this dark tunnel 
+you can't always see the light at the end 
+of the tunnel but if you just keep moving 
+you will come to a better place"
+-Uncle Iroh
+"""
+
+write_text(secret_text, "secret_text.png")
+encode_image("original_image.png", "secret_text.png")
 decode_image("encoded_image.png")

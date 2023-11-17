@@ -14,7 +14,17 @@ from PIL import Image, ImageDraw, ImageFont
 
 def decode_image(path_to_png):
     """
-    TODO: Add docstring and complete implementation.
+    Decodes a steganographically encoded image.
+
+    This function takes an image where secret data has been encoded in the least significant bits of the pixels.
+    It extracts and reveals this data by creating a new image where the pixels are either white or black,
+    depending on the least significant bit of the red channel of the corresponding pixel in the original image.
+
+    Parameters:
+    path_to_png (str): The file path to the encoded PNG image.
+    
+    Returns:
+    None: The function saves the decoded image as 'decoded_image.png'.
     """
     # Open the image using PIL:
     encoded_image = Image.open(path_to_png)
@@ -44,7 +54,18 @@ def decode_image(path_to_png):
 
 def encode_image(path_to_original_png, path_to_text_png):
     """
-    TODO: Add docstring and complete implementation.
+    Encodes secret data into an image using steganography.
+
+    This function takes an original image and a text image (where text is typically represented in black and white).
+    It encodes the text image into the least significant bits of the pixels of the original image,
+    effectively hiding the text in the image.
+
+    Parameters:
+    path_to_original_png (str): The file path to the original PNG image.
+    path_to_text_png (str): The file path to the PNG image containing the text to be encoded.
+
+    Returns:
+    None: The function saves the encoded image as 'encoded_image.png'.
     """
     original_image = Image.open(path_to_original_png)
     text_image = Image.open(path_to_text_png)
@@ -64,7 +85,17 @@ def encode_image(path_to_original_png, path_to_text_png):
 
 def write_text(text_to_write, path_to_output_png):
     """
-    TODO: Add docstring and complete implementation.
+    Writes text onto a black background image.
+
+    This function creates a new image with a black background and writes the provided text onto it.
+    The text is written in white color using the default system font.
+
+    Parameters:
+    text_to_write (str): The text to be written on the image.
+    path_to_output_png (str): The file path where the output PNG image should be saved.
+
+    Returns:
+    None: The function saves the text-written image to the specified path.
     """
     black_background = Image.new("RGB", (1600, 900), "black")
     draw = ImageDraw.Draw(black_background)
